@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package api.v1.user;
+package next_go_anex.api.v1.notification;
 option go_package = "backend/src/_generated/proto/v1;proto_v1";
 
 message Notification {

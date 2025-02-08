@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package api.v1.user;
+package next_go.api.v1.user;
 option go_package = "grpc_backend/src/_generated/proto/v1;proto_v1";
 
 import "google/api/annotations.proto";
