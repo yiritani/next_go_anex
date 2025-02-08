@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package api.v1.user;
+option go_package = "backend/src/_generated/proto/v1;proto_v1";
+
+message Notification {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string phone_number = 4;
+  string address = 5;
+}
+
+message ListNotificationRequest {};
+message ListNotificationResponse {
+  repeated Notification notifications = 1;
+}
+
+message SendNotificationRequest {
+  string name = 1;
+  string email = 2;
+}
+message SendNotificationResponse {
+  bool success = 1;
+}
+
+service NotificationService {
+  rpc ListNotification(ListNotificationRequest) returns (ListNotificationResponse) {}
+  rpc SendNotification(ListNotificationRequest) returns (ListNotificationResponse) {}
+}
