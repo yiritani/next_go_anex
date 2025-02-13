@@ -1,0 +1,9 @@
+# Start Generation Here
+.idea/
+# End Generation Here
+
+# Start Generation Here
+*.tfstate
+*.tfstate.backup
+.terraform/
+# End Generation Here
