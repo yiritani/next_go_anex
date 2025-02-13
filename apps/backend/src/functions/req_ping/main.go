@@ -3,28 +3,25 @@ package req_ping
 import (
 	"encoding/json"
 	"fmt"
-	"html"
 	"net/http"
-
-	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 )
 
-func init() {
-   functions.HTTP("HelloHTTP", helloHTTP)
-}
+func Ping(w http.ResponseWriter, r *http.Request) {
+	resp, err := http.Get("https://jsonplaceholder.typicode.com/todos/1")
+	if err != nil {
+		http.Error(w, "Failed to fetch data", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
 
-// helloHTTP is an HTTP Cloud Function with a request parameter.
-func helloHTTP(w http.ResponseWriter, r *http.Request) {
-  var d struct {
-    Name string `json:"name"`
-  }
-  if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
-    fmt.Fprint(w, "Hello, World!")
-    return
-  }
-  if d.Name == "" {
-    fmt.Fprint(w, "Hello, World!")
-    return
-  }
-  fmt.Fprintf(w, "Hello, %s!", html.EscapeString(d.Name))
+	var response map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		http.Error(w, "Failed to decode response", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Print(response) // Print the response to the console
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }

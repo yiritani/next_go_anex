@@ -1,6 +1,6 @@
-module req_ping
+module github.com/yiritani/req_ping
 
-go 1.23.5
+go 1.22
 
 require github.com/GoogleCloudPlatform/functions-framework-go v1.9.1
 
