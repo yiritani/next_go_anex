@@ -1,27 +1,36 @@
 package req_ping
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
+
+	"connectrpc.com/connect"
+	next_go_proto_v1 "github.com/yiritani/next_go_proto/sdk/golang/_generated/protos/next_go/v1"
+	next_go_proto_v1connect "github.com/yiritani/next_go_proto/sdk/golang/_generated/protos/next_go/v1/next_go_proto_v1connect"
 )
 
-func Ping(w http.ResponseWriter, r *http.Request) {
-	resp, err := http.Get("https://jsonplaceholder.typicode.com/todos/1")
+func Handler(w http.ResponseWriter, r *http.Request) {
+	client := next_go_proto_v1connect.NewPingServiceClient(
+		http.DefaultClient,
+		"https://grpc-backend-gateway-9uia1nx.uc.gateway.dev",
+	)
+	res, err := client.Ping(
+		context.Background(), 
+		connect.NewRequest(&next_go_proto_v1.PingRequest{
+			Message: "hello",
+		}),
+	)
 	if err != nil {
-		http.Error(w, "Failed to fetch data", http.StatusInternalServerError)
-		return
-	}
-	defer resp.Body.Close()
-
-	var response map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		http.Error(w, "Failed to decode response", http.StatusInternalServerError)
-		return
+		log.Fatalf("Failed to ping: %v", err)
 	}
 
-	fmt.Print(response) // Print the response to the console
+	log.Printf("Ping response: %v", res.Msg)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": res.Msg.Message,
+	})
+	w.WriteHeader(http.StatusOK)
 }
